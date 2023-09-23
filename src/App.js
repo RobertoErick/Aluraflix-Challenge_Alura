@@ -1,22 +1,21 @@
 import './reset.css';
-import styled from 'styled-components';
 import Header from './Componentes/Header';
-import Banner from './Componentes/Banner';
+import Home from './Componentes/Home';
 import Footer from './Componentes/Footer';
+import NuevoVideo from './Componentes/NuevoVideo';
+import {BrowserRouter as Router, Routes, Route} from 'react-router-dom';
 
-const Contenido = styled.div`
-    background-color: rgba(0, 0, 0, 0.90);
-    height: 100px;
-`
 
 function App() {
   return (
-  <>
+  <Router>
     <Header />
-    <Banner />
-    <Contenido />
+    <Routes>
+      <Route path='/' element={<Home />} />
+      <Route path='/NuevoVideo' element={<NuevoVideo />} />
+    </Routes> 
     <Footer />
-  </>
+  </ Router>
   );
 };
 

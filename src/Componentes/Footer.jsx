@@ -8,7 +8,7 @@ const StyledFooter = styled.div`
     border-top: 1px solid blue;
     padding: 20px 10px 50px 10px;
     background: rgba(0, 0, 0, 0.90);
-    width: 100vw;
+    width: 100%;
 `
 
 const StyledImg = styled.img`

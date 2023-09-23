@@ -1,5 +1,6 @@
 import bannerImg from "../img/banner.png"
 import styled from "styled-components";
+import Contenido from "./Contenido";
 
 const FiltroStyled = styled.div`
     background: linear-gradient(to bottom, rgb(0, 18, 51), rgb(20, 20, 20)); /* Gradiente lineal de color a negro */
@@ -20,6 +21,7 @@ function Banner () {
         <FiltroStyled> 
             <BannerStyled src={bannerImg} alt="Banner de la pagina"/>
         </ FiltroStyled>
+        <Contenido />
         </>    
     ); 
 };

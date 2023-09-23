@@ -1,5 +1,6 @@
 import styled from "styled-components";
 import Boton from "./Boton";
+import { Link } from "react-router-dom";
 import Logo from '../img/aluraflix.png';
 
 const HeaderStyled = styled.header`
@@ -17,8 +18,8 @@ const LogoStyled = styled.img`
 function Header () {
     return(
         <HeaderStyled>
-            <LogoStyled src={Logo} alt="logo" onClick={() => {window.location.href = '../App'}}/>
-            <Boton />
+            <Link to="/"> <LogoStyled src={Logo} alt="logo"/> </Link>
+            <Link to="/NuevoVideo"> <Boton /> </Link>
         </HeaderStyled>
     );
 };
