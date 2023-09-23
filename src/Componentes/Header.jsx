@@ -17,8 +17,8 @@ const LogoStyled = styled.img`
 function Header () {
     return(
         <HeaderStyled>
-            <LogoStyled src={Logo} alt="logo" />
-        <Boton />
+            <LogoStyled src={Logo} alt="logo" onClick={() => {window.location.href = '../App'}}/>
+            <Boton />
         </HeaderStyled>
     );
 };
