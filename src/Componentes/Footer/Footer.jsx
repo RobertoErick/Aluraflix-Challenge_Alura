@@ -1,5 +1,5 @@
 import styled from "styled-components";
-import Logo from "../img/aluraflix.png";
+import Logo from "../../img/aluraflix.png";
 
 const StyledFooter = styled.div`
     display: flex;

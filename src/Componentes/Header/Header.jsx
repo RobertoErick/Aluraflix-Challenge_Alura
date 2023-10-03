@@ -1,14 +1,15 @@
 import styled from "styled-components";
-import Boton from "./Boton";
+import Boton from "../Botones/BotonNuevoVideo";
 import { Link } from "react-router-dom";
-import Logo from '../img/aluraflix.png';
+import Logo from '../../img/aluraflix.png';
 
 const HeaderStyled = styled.header`
     display: flex;
-    justify-content: space-between;
-    padding: 20px;
-    background-color: black;
     align-items: center;
+    justify-content: space-between;
+    padding: 50px;
+    height: 100px;
+    background-color: black;
 `
 const LogoStyled = styled.img`
     width: 168.45px;
