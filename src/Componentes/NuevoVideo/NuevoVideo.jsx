@@ -1,7 +1,7 @@
-import React, { useState, useEffect } from "react";
+import React, {useState} from 'react';
 import { Link } from "react-router-dom";
+import { Formik } from 'formik';
 import { TextField, Button, Box, Select, MenuItem, InputLabel, FormControl} from "@mui/material";
-import { validarTitulo, validarLink, validarImagen, validarDescripcion, validarCodigo } from "./validaciones";
 import styled from "styled-components";
 import Fondo from "../Fondo";
 
@@ -20,71 +20,24 @@ const ContenedorBotones = styled.div`
     justify-content: space-between;
 `
 
-function NuevoVideo () {
+const TextFieldStyle = {
+    input: {
+        color: "white",
+        background: "#53585D"
+      }, 
+    label: {
+          color:  "#C2C2C2"
+      },
+    margin: "25px 0 25px 0"
+  }
 
-    const [titulo, setTitulo] = useState({
-        value: localStorage.getItem('titulo') || "",
-        valid: null,
-      });
-    const [link, setLink] = useState({ 
-        value: localStorage.getItem(`link`) || "", 
-        valid: null 
-      });
-    const [imagen, setImagen] = useState({ 
-        value: localStorage.getItem(`imagen`) || "", 
-        valid: null 
-      });
-    const [descripcion, setDescripcion] = useState({ 
-        value: localStorage.getItem(`descripcion`) || "", 
-        valid: null 
-      });
-    const [codigo, setCodigo] = useState({ 
-        value: localStorage.getItem(`codigo`) || "", 
-        valid: null 
-    });
-
-    const [categoria, setCategoria] = React.useState('');
-
-    const handleChange = (event) => {
+const NuevoVideo = () => {
+    const [categoria, setCategoria] = useState('');
+    const handleChangeCategoria = (event) => {
         setCategoria(event.target.value);
-        };
-    
-    useEffect(() => {
-        setTitulo((prevTitulo) => ({
-          ...prevTitulo,
-          valid: validarTitulo(prevTitulo.value),
-        }));
-        setLink((prevLink) => ({
-          ...prevLink,
-          valid: validarLink(prevLink.value),
-        }));
-        setImagen((prevImagen) => ({
-            ...prevImagen,
-            valid: validarImagen(prevImagen.value),
-          }));
-        setDescripcion((prevDescripcion) => ({
-            ...prevDescripcion,
-            valid: validarDescripcion(prevDescripcion.value),
-          }));
-        setCodigo((prevCodigo) => ({
-            ...prevCodigo,
-            valid: validarCodigo(prevCodigo.value),
-          }));
-      }, []);
-
-      const TextFieldStyle = {
-        input: {
-            color: "white",
-            background: "#53585D"
-          }, 
-        label: {
-              color:  "#C2C2C2"
-          },
-        margin: "25px 0 25px 0"
-      }
-
-    return (
-        <Fondo>
+    };
+	return (
+		<Fondo>
             <Titulo>Nuevo Video</Titulo>
             <Box
                 component="form"
@@ -95,178 +48,215 @@ function NuevoVideo () {
                     flexDirection: "column",
                     padding: "5%"
                 }}
-                onSubmit={(e) => {
-                    e.preventDefault();
-                    if (titulo.valid && link.valid && imagen.valid && descripcion.valid && codigo.value) {
-                    console.log("Siguiente formulario");
-                    localStorage.setItem('titulo', titulo.value);
-                    localStorage.setItem('link', link.value);
-                    localStorage.setItem('imagen', imagen.value);
-                    localStorage.setItem('descripcion', descripcion.value);
-                    localStorage.setItem('codigo', codigo.value);
-                    } else {
-
-                    }
-                }}
                 >
-                <TextField
-                    required
-                    label="Titulo"
-                    variant="filled"
-                    sx={TextFieldStyle}
-                    fullWidth
-                    margin="dense"
-                    type="text"
-                    error={titulo.valid === false}
-                    helperText={
-                    titulo.valid === false && "Ingresa un correo electrónico válido."
-                    }
-                    value={titulo.value}
-                    onChange={(input) => {
-                    const titulo = input.target.value;
-                    const valido = validarTitulo(titulo);
-                    setTitulo({ value: titulo, valid: valido });
+                <Formik
+                    initialValues={{
+                        titulo: '',
+                        video: '',
+                        categoria: '',
+                        imagen: '',
+                        descripcion: '',
+                        seguridad: ''
                     }}
-                />
-                <TextField
-                    required
-                    label="Link del video"
-                    variant="filled"
-                    sx={TextFieldStyle}
-                    fullWidth
-                    margin="dense"
-                    type="url"
-                    error={link.valid === false}
-                    helperText={
-                    link.valid === false &&
-                    "Ingresa una contraseña válida, Al menos 8 caracteres y máximo 20."
-                    }
-                    value={link.value}
-                    onChange={(input) => {
-                    const link = input.target.value;
-                    setLink({ value: link, valid: validarLink(link) });
-                    }}
-                />
-                <TextField
-                    required
-                    label="Link imagen del video"
-                    variant="filled"
-                    sx={TextFieldStyle}
-                    fullWidth
-                    margin="dense"
-                    type="url"
-                    error={imagen.valid === false}
-                    helperText={
-                    imagen.valid === false &&
-                    "Ingresa una contraseña válida, Al menos 8 caracteres y máximo 20."
-                    }
-                    value={imagen.value}
-                    onChange={(input) => {
-                    const imagen = input.target.value;
-                    setImagen({ value: imagen, valid: validarImagen(imagen) });
-                    }}
-                />
-                <FormControl variant="filled" sx={{margin: "25px 0 25px 0"}}>
-                <InputLabel htmlFor="categoria" style={{ color: '#C2C2C2' }}>Escoja una categoria</InputLabel>
-                    <Select
-                        required
-                        value={categoria}
-                        onChange={handleChange}
-                        autoWidth
-                        id="categoria"
-                        sx={{
-                        color: "white",
-                        background: "#53585D"
-                        }}
-                    >
-                        <MenuItem value="">
-                        <em>None</em>
-                        </MenuItem>
-                        <MenuItem value={10}>Front End</MenuItem>
-                        <MenuItem value={21}>Back End</MenuItem>
-                        <MenuItem value={22}>Innovacion y Gestión</MenuItem>
-                    </Select>
-                </FormControl>
-                <TextField
-                    required
-                    label="Descripción"
-                    variant="filled"
-                    sx={TextFieldStyle}
-                    margin="dense"
-                    type="text"
-                    error={descripcion.valid === false}
-                    helperText={
-                    descripcion.valid === false &&
-                    "Ingresa una contraseña válida, Al menos 8 caracteres y máximo 20."
-                    }
-                    value={descripcion.value}
-                    onChange={(input) => {
-                    const descripcion = input.target.value;
-                    setDescripcion({ value: descripcion, valid: validarDescripcion(descripcion) });
-                    }}
-                />
-                <TextField
-                    required
-                    label="Codigo de seguridad"
-                    variant="filled"
-                    sx={TextFieldStyle}
-                    fullWidth
-                    margin="dense"
-                    type="number"
-                    error={codigo.valid === false}
-                    helperText={
-                    codigo.valid === false &&
-                    "Ingresa una contraseña válida, Al menos 8 caracteres y máximo 20."
-                    }
-                    value={codigo.value}
-                    onChange={(input) => {
-                    const codigo = input.target.value;
-                    setCodigo({ value: codigo, valid: validarCodigo(codigo) });
-                    }}
-                />
-                <ContenedorBotones>
-                    <div>
-                        <Button 
-                            variant="contained" 
-                            type="submit"
-                            sx={{
-                                fontSize: "21px",
-                                fontWeight: "600"
-                            }}>
-                            Guardar
-                        </Button>
-                        <Button 
-                            variant="filled"
-                            onClick={() => {
-                                setTitulo({ value: '', valid: null });
-                                setLink({ value: '', valid: null });
-                                setImagen({ value: '', valid: null });
-                                setDescripcion({ value: '', valid: null });
-                                setCodigo({ value: '', valid: null });
-                              }}
-                            sx={{
-                                background: "#9E9E9E",
-                                marginLeft: "40px",
-                                fontSize: "21px",
-                                fontWeight: "600" 
-                            }}>
-                            Limpiar
-                        </Button>
-                    </div>
-                    <Link to="/NuevaCategoria">
-                        <Button 
-                            variant="contained"
-                            sx={{
-                                fontSize: "21px",
-                                fontWeight: "600"
-                            }}>
-                                Nueva Categoria
-                        </Button>
-                    </Link>
-                </ContenedorBotones>
-            </Box>
-        </Fondo>
-      );
-};
+                    validate={(valores) => {
+                        let errores = {};
 
+                        // Validacion nombre
+                        if(!valores.titulo){
+                            errores.titulo = 'Por favor ingresa un titulo'
+                        } else if(!/^[a-zA-ZÀ-ÿ\s]{1,40}$/.test(valores.titulo)){
+                            errores.titulo = 'El titulo solo puede contener letras y espacios'
+                        }
+
+                        // Validación de URL Video
+                        if (!valores.video) {
+                            errores.video = 'Por favor, ingresa una URL';
+                        } else if (!/^https?:\/\/(www\.)?[-a-zA-Z0-9@:%._~#=]{2,256}\.[a-z]{2,6}\b([-a-zA-Z0-9@:%_.~#?&//=]*)$/.test(valores.video)) 
+                        {
+                            errores.video = 'La URL ingresada no es válida';
+                        }
+
+                        // Validación de URL imagen
+                        if (!valores.imagen) {
+                            errores.imagen = 'Por favor, ingresa una URL';
+                        } else if (!/^https?:\/\/(www\.)?[-a-zA-Z0-9@:%._~#=]{2,256}\.[a-z]{2,6}\b([-a-zA-Z0-9@:%_.~#?&//=]*)$/.test(valores.video)) 
+                        {
+                            errores.imagen = 'La URL ingresada no es válida';
+                        }
+
+                        // Validacion de Descripcion
+                        if(!valores.descripcion){
+                            errores.descripcion = 'Por favor ingresa una descripcion';
+                        }
+
+                        // Validacion de Codigo de Seguridad
+                        if (!valores.seguridad) {
+                            errores.seguridad = 'Por favor, ingresa un código de seguridad';
+                        } else if (!/^\d{1,6}$/.test(valores.seguridad)) {
+                            errores.seguridad = 'Ingrese hasta 6 números como código de seguridad';
+                        }
+
+                        return errores;
+                    }}
+                    onSubmit={({resetForm}) => {
+                        resetForm();
+                    }}
+                >
+                    {( {values, errors, touched, handleSubmit, handleChange, handleBlur} ) => (
+                        <form onSubmit={handleSubmit}>
+                            <TextField
+                                required
+                                label="Titulo"
+                                id="titulo"
+                                name="titulo" 
+                                variant="filled"
+                                sx={TextFieldStyle}
+                                fullWidth
+                                margin="dense"
+                                type="text"
+                                value={values.titulo}
+                                onChange={handleChange}
+                                onBlur={handleBlur}
+                                error={touched.titulo && errors.titulo}
+                                helperText={
+                                    touched.titulo && errors.titulo && "El titulo solo puede contener letras y espacios"
+                                }
+                            />
+                            <TextField
+                                required
+                                label="Link de video"
+                                id="video"
+                                name="video" 
+                                variant="filled"
+                                sx={TextFieldStyle}
+                                fullWidth
+                                margin="dense"
+                                type="text"
+                                value={values.video}
+                                onChange={handleChange}
+                                onBlur={handleBlur}
+                                error={touched.video && errors.video}
+                                helperText={
+                                    touched.video && errors.video && "La URL ingresada no es válida"
+                                }
+                            />
+                            <TextField
+                                required
+                                label="Link imagen del video"
+                                id="imagen"
+                                name="imagen" 
+                                variant="filled"
+                                sx={TextFieldStyle}
+                                fullWidth
+                                margin="dense"
+                                type="text"
+                                value={values.imagen}
+                                onChange={handleChange}
+                                onBlur={handleBlur}
+                                error={touched.imagen && errors.imagen}
+                                helperText={
+                                    touched.imagen && errors.imagen && "La URL ingresada no es válida"
+                                }
+                            />
+                            <FormControl variant="filled" sx={{margin: "25px 0 25px 0", width: "100%"}}>
+                                <InputLabel htmlFor="categoria" style={{ color: '#C2C2C2' }}>Escoja una categoria</InputLabel>
+                                    <Select
+                                        required
+                                        value={categoria}
+                                        onChange={handleChangeCategoria}
+                                        fullWidth
+                                        id="categoria"
+                                        sx={{
+                                        color: "white",
+                                        background: "#53585D"
+                                        }}
+                                    >
+                                        <MenuItem value="">
+                                        <em>None</em>
+                                        </MenuItem>
+                                        <MenuItem value={10}>Front End</MenuItem>
+                                        <MenuItem value={21}>Back End</MenuItem>
+                                        <MenuItem value={22}>Innovacion y Gestión</MenuItem>
+                                    </Select>
+                            </FormControl>
+                            <TextField
+                                required
+                                label="Descripcion"
+                                id="descripcion"
+                                name="descripcion" 
+                                variant="filled"
+                                sx={TextFieldStyle}
+                                fullWidth
+                                margin="dense"
+                                type="text"
+                                value={values.descripcion}
+                                onChange={handleChange}
+                                onBlur={handleBlur}
+                                error={touched.descripcion && errors.descripcion}
+                                helperText={
+                                    touched.descripcion && errors.descripcion && "Por favor ingresa una descripcion"
+                                }
+                            />
+                            <TextField
+                                required
+                                label="Codigo de seguridad"
+                                id="seguridad"
+                                name="seguridad" 
+                                variant="filled"
+                                sx={TextFieldStyle}
+                                fullWidth
+                                margin="dense"
+                                type="number"
+                                value={values.seguridad}
+                                onChange={handleChange}
+                                onBlur={handleBlur}
+                                error={touched.seguridad && errors.seguridad}
+                                helperText={
+                                    touched.seguridad && errors.seguridad && "Ingrese hasta 6 números como código de seguridad"
+                                }
+                            />
+                            <ContenedorBotones>
+                                <div>
+                                    <Button 
+                                        variant="contained" 
+                                        type="submit"
+                                        sx={{
+                                            fontSize: "21px",
+                                            fontWeight: "600"
+                                        }}>
+                                        Guardar
+                                    </Button>
+                                    <Button 
+                                        variant="filled"
+                                        onClick={() => {
+                                            window.location.reload()
+                                        }} 
+                                        sx={{
+                                            background: "#9E9E9E",
+                                            marginLeft: "40px",
+                                            fontSize: "21px",
+                                            fontWeight: "600" 
+                                        }}>
+                                        Limpiar
+                                    </Button>
+                                </div>
+                                <Link to="/NuevaCategoria">
+                                    <Button 
+                                        variant="contained"
+                                        sx={{
+                                            fontSize: "21px",
+                                            fontWeight: "600"
+                                        }}>
+                                            Nueva Categoria
+                                    </Button>
+                                </Link>
+                            </ContenedorBotones>
+                        </form>
+                    )}
+                </Formik>
+            </Box>
+		</Fondo>
+	);
+}
+ 
 export default NuevoVideo;

@@ -1,6 +1,7 @@
 import { React, useEffect, useState } from "react";
 import { TextField, Button, Box} from "@mui/material";
 import { validarNombre, validarDescripcion, validarCodigo } from "./validaciones";
+import { Formik } from 'formik';
 import Fondo from "../Fondo";
 import styled from "styled-components";
 
@@ -20,47 +21,18 @@ const ContenedorBotones = styled.div`
     justify-content: flex-start;
 `
 
+const TextFieldStyle = {
+    input: {
+        color: "white",
+        background: "#53585D"
+      }, 
+    label: {
+          color:  "#C2C2C2"
+      },
+    margin: "25px 0 25px 0"
+}
+
 function NuevaCategoria (){
-
-    const [nombre, setNombre] = useState({
-        value: localStorage.getItem('nombre') || "",
-        valid: null,
-      });
-    const [descripcion, setDescripcion] = useState({ 
-        value: localStorage.getItem(`descripcion`) || "", 
-        valid: null 
-      });
-    const [codigo, setCodigo] = useState({ 
-        value: localStorage.getItem(`codigo`) || "", 
-        valid: null 
-    });
-    
-    useEffect(() => {
-        setNombre((prevNombre) => ({
-          ...prevNombre,
-          valid: validarNombre(prevNombre.value),
-        }));
-        setDescripcion((prevDescripcion) => ({
-            ...prevDescripcion,
-            valid: validarDescripcion(prevDescripcion.value),
-          }));
-        setCodigo((prevCodigo) => ({
-            ...prevCodigo,
-            valid: validarCodigo(prevCodigo.value),
-          }));
-      }, []);
-
-      const TextFieldStyle = {
-        input: {
-            color: "white",
-            background: "#53585D"
-          }, 
-        label: {
-              color:  "#C2C2C2"
-          },
-        margin: "25px 0 25px 0"
-      }
-
     return (
         <Fondo>
             <Titulo>Nueva Categoria</Titulo>
@@ -85,6 +57,55 @@ function NuevaCategoria (){
                     }
                 }}
                 >
+                <Formik
+                    initialValues={{
+                        nombre: '',
+                        correo: ''
+                    }}
+                    validate={(valores) => {
+                        let errores = {};
+
+                        // Validacion nombre
+                        if(!valores.titulo){
+                            errores.titulo = 'Por favor ingresa un titulo'
+                        } else if(!/^[a-zA-ZÀ-ÿ\s]{1,40}$/.test(valores.titulo)){
+                            errores.titulo = 'El titulo solo puede contener letras y espacios'
+                        }
+
+                        // Validación de URL Video
+                        if (!valores.video) {
+                            errores.video = 'Por favor, ingresa una URL';
+                        } else if (!/^https?:\/\/(www\.)?[-a-zA-Z0-9@:%._~#=]{2,256}\.[a-z]{2,6}\b([-a-zA-Z0-9@:%_.~#?&//=]*)$/.test(valores.video)) 
+                        {
+                            errores.video = 'La URL ingresada no es válida';
+                        }
+
+                        // Validación de URL imagen
+                        if (!valores.imagen) {
+                            errores.imagen = 'Por favor, ingresa una URL';
+                        } else if (!/^https?:\/\/(www\.)?[-a-zA-Z0-9@:%._~#=]{2,256}\.[a-z]{2,6}\b([-a-zA-Z0-9@:%_.~#?&//=]*)$/.test(valores.video)) 
+                        {
+                            errores.imagen = 'La URL ingresada no es válida';
+                        }
+
+                        // Validacion de Descripcion
+                        if(!valores.descripcion){
+                            errores.descripcion = 'Por favor ingresa una descripcion';
+                        }
+
+                        // Validacion de Codigo de Seguridad
+                        if (!valores.seguridad) {
+                            errores.seguridad = 'Por favor, ingresa un código de seguridad';
+                        } else if (!/^\d{1,6}$/.test(valores.seguridad)) {
+                            errores.seguridad = 'Ingrese hasta 6 números como código de seguridad';
+                        }
+
+                        return errores;
+                    }}
+                    onSubmit={(valores, {resetForm}) => {
+                        resetForm();
+                    }}
+                ></Formik>
                 <TextField
                     required
                     label="Nombre"
