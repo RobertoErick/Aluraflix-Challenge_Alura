@@ -1,6 +1,6 @@
 import styled from "styled-components";
 import Boton from "../Botones/BotonNuevoVideo";
-import { Link } from "react-router-dom";
+import { Link, useLocation } from "react-router-dom";
 import Logo from '../../img/aluraflix.png';
 
 const HeaderStyled = styled.header`
@@ -17,10 +17,14 @@ const LogoStyled = styled.img`
 `
 
 function Header () {
+    const location = useLocation();
+    // Verifica si la ruta actual es la página de inicio ("/")
+    const isHomePage = location.pathname === '/';
     return(
         <HeaderStyled>
             <Link to="/"> <LogoStyled src={Logo} alt="logo"/> </Link>
-            <Link to="/NuevoVideo"> <Boton /> </Link>
+
+            {isHomePage && <Link to="/NuevoVideo"> <Boton /> </Link>}
         </HeaderStyled>
     );
 };

@@ -1,10 +1,8 @@
-import { React, useEffect, useState } from "react";
+import { React } from "react";
 import { TextField, Button, Box} from "@mui/material";
-import { validarNombre, validarDescripcion, validarCodigo } from "./validaciones";
 import { Formik } from 'formik';
 import Fondo from "../Fondo";
 import styled from "styled-components";
-
 
 const Titulo = styled.h1`
     color: #F5F5F5;
@@ -45,47 +43,21 @@ function NuevaCategoria (){
                     flexDirection: "column",
                     padding: "5%"
                 }}
-                onSubmit={(e) => {
-                    e.preventDefault();
-                    if (nombre.valid && descripcion.valid && codigo.value) {
-                    console.log("Siguiente formulario");
-                    localStorage.setItem('nombre', nombre.value);
-                    localStorage.setItem('descripcion', descripcion.value);
-                    localStorage.setItem('codigo', codigo.value);
-                    } else {
-
-                    }
-                }}
                 >
                 <Formik
                     initialValues={{
                         nombre: '',
-                        correo: ''
+                        descripcion: '',
+                        seguridad: ''
                     }}
                     validate={(valores) => {
                         let errores = {};
 
                         // Validacion nombre
-                        if(!valores.titulo){
-                            errores.titulo = 'Por favor ingresa un titulo'
-                        } else if(!/^[a-zA-ZÀ-ÿ\s]{1,40}$/.test(valores.titulo)){
-                            errores.titulo = 'El titulo solo puede contener letras y espacios'
-                        }
-
-                        // Validación de URL Video
-                        if (!valores.video) {
-                            errores.video = 'Por favor, ingresa una URL';
-                        } else if (!/^https?:\/\/(www\.)?[-a-zA-Z0-9@:%._~#=]{2,256}\.[a-z]{2,6}\b([-a-zA-Z0-9@:%_.~#?&//=]*)$/.test(valores.video)) 
-                        {
-                            errores.video = 'La URL ingresada no es válida';
-                        }
-
-                        // Validación de URL imagen
-                        if (!valores.imagen) {
-                            errores.imagen = 'Por favor, ingresa una URL';
-                        } else if (!/^https?:\/\/(www\.)?[-a-zA-Z0-9@:%._~#=]{2,256}\.[a-z]{2,6}\b([-a-zA-Z0-9@:%_.~#?&//=]*)$/.test(valores.video)) 
-                        {
-                            errores.imagen = 'La URL ingresada no es válida';
+                        if(!valores.nombre){
+                            errores.nombre = 'Por favor ingresa un nombre'
+                        } else if(!/^[a-zA-ZÀ-ÿ\s]{1,40}$/.test(valores.nombre)){
+                            errores.nombre = 'El nombre solo puede contener letras y espacios'
                         }
 
                         // Validacion de Descripcion
@@ -103,97 +75,100 @@ function NuevaCategoria (){
                         return errores;
                     }}
                     onSubmit={(valores, {resetForm}) => {
+                        console.log(valores);
                         resetForm();
                     }}
-                ></Formik>
-                <TextField
-                    required
-                    label="Nombre"
-                    variant="filled"
-                    sx={TextFieldStyle}
-                    fullWidth
-                    margin="dense"
-                    type="text"
-                    error={nombre.valid === false}
-                    helperText={
-                    nombre.valid === false && "Ingresa un correo electrónico válido."
-                    }
-                    value={nombre.value}
-                    onChange={(input) => {
-                    const nombre = input.target.value;
-                    const valido = validarNombre(nombre);
-                    setNombre({ value: nombre, valid: valido });
-                    }}
-                />
-                <TextField
-                    required
-                    label="Descripción"
-                    variant="filled"
-                    sx={TextFieldStyle}
-                    margin="dense"
-                    type="text"
-                    error={descripcion.valid === false}
-                    helperText={
-                    descripcion.valid === false &&
-                    "Ingresa una contraseña válida, Al menos 8 caracteres y máximo 20."
-                    }
-                    value={descripcion.value}
-                    onChange={(input) => {
-                    const descripcion = input.target.value;
-                    setDescripcion({ value: descripcion, valid: validarDescripcion(descripcion) });
-                    }}
-                />
-                <TextField
-                    required
-                    label="Color" 
-                    sx={TextFieldStyle}
-                    type="color"
-                />
-                <TextField
-                    required
-                    label="Codigo de seguridad"
-                    variant="filled"
-                    sx={TextFieldStyle}
-                    fullWidth
-                    margin="dense"
-                    type="number"
-                    error={codigo.valid === false}
-                    helperText={
-                    codigo.valid === false &&
-                    "Ingresa una contraseña válida, Al menos 8 caracteres y máximo 20."
-                    }
-                    value={codigo.value}
-                    onChange={(input) => {
-                    const codigo = input.target.value;
-                    setCodigo({ value: codigo, valid: validarCodigo(codigo) });
-                    }}
-                />
-                <ContenedorBotones>
-                        <Button 
-                            variant="contained" 
-                            type="submit"
-                            sx={{
-                                fontSize: "21px",
-                                fontWeight: "600"
-                            }}>
-                            Guardar
-                        </Button>
-                        <Button 
-                            variant="filled"
-                            onClick={() => {
-                                setNombre({ value: '', valid: null });
-                                setDescripcion({ value: '', valid: null });
-                                setCodigo({ value: '', valid: null });
-                              }}
-                            sx={{
-                                background: "#9E9E9E",
-                                marginLeft: "40px",
-                                fontSize: "21px",
-                                fontWeight: "600" 
-                            }}>
-                            Limpiar
-                        </Button>
-                </ContenedorBotones>
+                >
+                    {( {values, errors, touched, handleSubmit, handleChange, handleBlur} ) => (
+                    <form onSubmit={handleSubmit}>
+                    <TextField
+                        required
+                        label="Nombre"
+                        id="nombre"
+                        name="nombre"
+                        variant="filled"
+                        sx={TextFieldStyle}
+                        fullWidth
+                        margin="dense"
+                        type="text"
+                        value={values.nombre}
+                        onChange={handleChange}
+                        onBlur={handleBlur}
+                        error={touched.nombre && errors.nombre}
+                        helperText={
+                            touched.nombre && errors.nombre && "El nombre solo puede contener letras y espacios"
+                        }
+                    />
+                    <TextField
+                        required
+                        label="Descripcion"
+                        id="descripcion"
+                        name="descripcion"
+                        variant="filled"
+                        sx={TextFieldStyle}
+                        fullWidth
+                        margin="dense"
+                        type="text"
+                        value={values.descripcion}
+                        onChange={handleChange}
+                        onBlur={handleBlur}
+                        error={touched.descripcion && errors.descripcion}
+                        helperText={
+                            touched.descripcion && errors.descripcion && "La descripcion solo puede contener letras y espacios"
+                        }
+                    />
+                    <TextField
+                        required
+                        label="Color"
+                        fullWidth 
+                        sx={TextFieldStyle}
+                        type="color"
+                    />
+                    <TextField
+                        required
+                        label="Seguridad"
+                        id="seguridad"
+                        name="seguridad"
+                        variant="filled"
+                        sx={TextFieldStyle}
+                        fullWidth
+                        margin="dense"
+                        type="text"
+                        value={values.seguridad}
+                        onChange={handleChange}
+                        onBlur={handleBlur}
+                        error={touched.seguridad && errors.seguridad}
+                        helperText={
+                            touched.seguridad && errors.seguridad && "Ingrese hasta 6 números como código de seguridad"
+                        }
+                    />
+                    <ContenedorBotones>
+                            <Button 
+                                variant="contained" 
+                                type="submit"
+                                sx={{
+                                    fontSize: "21px",
+                                    fontWeight: "600"
+                                }}>
+                                Guardar
+                            </Button>
+                            <Button 
+                                variant="filled"
+                                onClick={() => {
+                                    window.location.reload();
+                                }}
+                                sx={{
+                                    background: "#9E9E9E",
+                                    marginLeft: "40px",
+                                    fontSize: "21px",
+                                    fontWeight: "600" 
+                                }}>
+                                Limpiar
+                            </Button>
+                    </ContenedorBotones>
+                    </form>
+                    )}
+                </Formik>
             </Box>
         </Fondo>
       );
