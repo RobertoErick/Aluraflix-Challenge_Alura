@@ -1,9 +1,10 @@
-import React, {useState} from 'react';
-import { Link } from "react-router-dom";
-import { Formik } from 'formik';
-import { TextField, Button, Box, Select, MenuItem, InputLabel, FormControl} from "@mui/material";
+import React from 'react';
+import { TextField, Button, FormControl, Select, MenuItem, InputLabel} from "@mui/material";
+import { useFormik } from 'formik';
+import * as Yup from 'yup';
+import Fondo from '../Fondo';
 import styled from "styled-components";
-import Fondo from "../Fondo";
+import { Link } from "react-router-dom";
 
 const Titulo = styled.h1`
     color: #F5F5F5;
@@ -31,231 +32,202 @@ const TextFieldStyle = {
     margin: "25px 0 25px 0"
   }
 
-const NuevoVideo = () => {
-    const [categoria, setCategoria] = useState('');
-    const handleChangeCategoria = (event) => {
-        setCategoria(event.target.value);
+const ContenedorForm = styled.div`
+  display: flex;
+  justify-content: center;
+  flex-Direction: column;
+  padding: 5%;
+`
+
+function NuevoVideo(){
+    const formik = useFormik({
+        initialValues: {
+          titulo: '',
+          video: '',
+          imagen: '',
+          categoria: '',
+          descripcion: '',
+          codigo: ''
+        },
+        validationSchema: Yup.object({
+          titulo: Yup.string()
+            .matches(/^[A-Za-z\s]+$/, 'El titulo solo puede contener letras y espacios')
+            .required('titulo requerido'),
+          video: Yup.string()
+            .required('video requerido'),
+          imagen: Yup.string()
+            .required('imagen requerido'),
+          categoria: Yup.string()
+            .required('categria requerido'),
+          descripcion: Yup.string()
+            .required('Descripcion requerida'),
+          codigo: Yup.string()
+            .max(7, 'Son maximo 7 numero')
+            .required('Codigo de seguridad requerido'),
+        }),
+        onSubmit: values => {
+          alert(JSON.stringify(values, null, 2));
+        },
+    });
+    
+    const handleLimpiar = () => {
+        formik.resetForm(); // Restablecerá los valores iniciales definidos en initialValues
     };
 	return (
-		<Fondo>
-            <Titulo>Nuevo Video</Titulo>
-            <Box
-                component="form"
-                autocomplete="off"
+	<Fondo>
+    <Titulo>Nuevo Video</Titulo>
+      <ContenedorForm>
+        <form onSubmit={formik.handleSubmit}>
+          <TextField
+            required
+            id="titulo"
+            name="titulo"
+            label="Titulo"
+            type="text"
+            onChange={formik.handleChange}
+            onBlur={formik.handleBlur}
+            value={formik.values.titulo}
+            variant="filled"
+            sx={TextFieldStyle}
+            fullWidth
+            margin="dense"
+            error={formik.touched.titulo && formik.errors.titulo}
+            helperText={
+              formik.touched.titulo && formik.errors.titulo && formik.errors.titulo
+            }
+          />
+          <TextField
+            required
+            id="video"
+            name="video"
+            label="Video"
+            type="url"
+            onChange={formik.handleChange}
+            onBlur={formik.handleBlur}
+            value={formik.values.video}
+            variant="filled"
+            sx={TextFieldStyle}
+            fullWidth
+            margin="dense"
+            error={formik.touched.video && formik.errors.video}
+            helperText={
+              formik.touched.video && formik.errors.video && formik.errors.video
+            }
+          />
+          <TextField
+            required
+            id="imagen"
+            name="imagen"
+            label="Imagen"
+            type="url"
+            onChange={formik.handleChange}
+            onBlur={formik.handleBlur}
+            value={formik.values.imagen}
+            variant="filled"
+            sx={TextFieldStyle}
+            fullWidth
+            margin="dense"
+            error={formik.touched.imagen && formik.errors.imagen}
+            helperText={
+              formik.touched.imagen && formik.errors.imagen && formik.errors.imagen
+            }
+          />
+          <FormControl variant="filled" sx={{margin: "25px 0 25px 0", width: "100%"}}>
+          <InputLabel htmlFor="categoria" style={{ color: '#C2C2C2' }}>Escoja una categoria</InputLabel>
+            <Select
+                required
+                fullWidth
+                id="categoria"
+                name="categoria"
                 sx={{
-                    display: "flex",
-                    justifyContent: "center",
-                    flexDirection: "column",
-                    padding: "5%"
-                }}
-                >
-                <Formik
-                    initialValues={{
-                        titulo: '',
-                        video: '',
-                        categoria: '',
-                        imagen: '',
-                        descripcion: '',
-                        seguridad: ''
+                    color: "white",
+                    background: "#53585D"
                     }}
-                    validate={(valores) => {
-                        let errores = {};
-
-                        // Validacion nombre
-                        if(!valores.titulo){
-                            errores.titulo = 'Por favor ingresa un titulo'
-                        } else if(!/^[a-zA-ZÀ-ÿ\s]{1,40}$/.test(valores.titulo)){
-                            errores.titulo = 'El titulo solo puede contener letras y espacios'
-                        }
-
-                        // Validación de URL Video
-                        if (!valores.video) {
-                            errores.video = 'Por favor, ingresa una URL';
-                        } else if (!/^https?:\/\/(www\.)?[-a-zA-Z0-9@:%._~#=]{2,256}\.[a-z]{2,6}\b([-a-zA-Z0-9@:%_.~#?&//=]*)$/.test(valores.video)) 
-                        {
-                            errores.video = 'La URL ingresada no es válida';
-                        }
-
-                        // Validación de URL imagen
-                        if (!valores.imagen) {
-                            errores.imagen = 'Por favor, ingresa una URL';
-                        } else if (!/^https?:\/\/(www\.)?[-a-zA-Z0-9@:%._~#=]{2,256}\.[a-z]{2,6}\b([-a-zA-Z0-9@:%_.~#?&//=]*)$/.test(valores.video)) 
-                        {
-                            errores.imagen = 'La URL ingresada no es válida';
-                        }
-
-                        // Validacion de Descripcion
-                        if(!valores.descripcion){
-                            errores.descripcion = 'Por favor ingresa una descripcion';
-                        }
-
-                        // Validacion de Codigo de Seguridad
-                        if (!valores.seguridad) {
-                            errores.seguridad = 'Por favor, ingresa un código de seguridad';
-                        } else if (!/^\d{1,6}$/.test(valores.seguridad)) {
-                            errores.seguridad = 'Ingrese hasta 6 números como código de seguridad';
-                        }
-
-                        return errores;
+                onChange={formik.handleChange}
+                onBlur={formik.handleBlur}
+                value={formik.values.categoria}
+            >
+                <MenuItem value="">Seleccione una Categoria</MenuItem>
+                <MenuItem value="Front">Front End</MenuItem>
+                <MenuItem value="Back">Back End</MenuItem>
+                <MenuItem value="Innovacion">Innovacion y Gestion</MenuItem>
+            </Select>
+            </FormControl>
+           <TextField
+            required
+            id="descripcion"
+            name="descripcion"
+            label="Descripcion"
+            type="text"
+            onChange={formik.handleChange}
+            onBlur={formik.handleBlur}
+            value={formik.values.descripcion}
+            variant="filled"
+            sx={TextFieldStyle}
+            fullWidth
+            margin="dense"
+            error={formik.touched.descripcion && formik.errors.descripcion}
+            helperText={
+              formik.touched.descripcion && formik.errors.descripcion && formik.errors.descripcion
+            }
+          />
+          <TextField
+            required
+            id="codigo"
+            name="codigo"
+            label="Codigo"
+            type="number"
+            onChange={formik.handleChange}
+            onBlur={formik.handleBlur}
+            value={formik.values.codigo}
+            variant="filled"
+            sx={TextFieldStyle}
+            fullWidth
+            margin="dense"
+            error={formik.touched.codigo && formik.errors.codigo}
+            helperText={
+              formik.touched.codigo && formik.errors.codigo && formik.errors.codigo
+            }
+          />
+            <ContenedorBotones>
+            <div>
+                <Button 
+                    variant="contained" 
+                    type="submit"
+                    sx={{
+                    fontSize: "21px",
+                    fontWeight: "600"
+                    }}>
+                        Guardar
+                </Button>
+                <Button 
+                    variant="filled"
+                    onClick={() => {
+                    handleLimpiar();
                     }}
-                    onSubmit={({resetForm}) => {
-                        resetForm();
-                    }}
-                >
-                    {( {values, errors, touched, handleSubmit, handleChange, handleBlur} ) => (
-                        <form onSubmit={handleSubmit}>
-                            <TextField
-                                required
-                                label="Titulo"
-                                id="titulo"
-                                name="titulo" 
-                                variant="filled"
-                                sx={TextFieldStyle}
-                                fullWidth
-                                margin="dense"
-                                type="text"
-                                value={values.titulo}
-                                onChange={handleChange}
-                                onBlur={handleBlur}
-                                error={touched.titulo && errors.titulo}
-                                helperText={
-                                    touched.titulo && errors.titulo && "El titulo solo puede contener letras y espacios"
-                                }
-                            />
-                            <TextField
-                                required
-                                label="Link de video"
-                                id="video"
-                                name="video" 
-                                variant="filled"
-                                sx={TextFieldStyle}
-                                fullWidth
-                                margin="dense"
-                                type="text"
-                                value={values.video}
-                                onChange={handleChange}
-                                onBlur={handleBlur}
-                                error={touched.video && errors.video}
-                                helperText={
-                                    touched.video && errors.video && "La URL ingresada no es válida"
-                                }
-                            />
-                            <TextField
-                                required
-                                label="Link imagen del video"
-                                id="imagen"
-                                name="imagen" 
-                                variant="filled"
-                                sx={TextFieldStyle}
-                                fullWidth
-                                margin="dense"
-                                type="text"
-                                value={values.imagen}
-                                onChange={handleChange}
-                                onBlur={handleBlur}
-                                error={touched.imagen && errors.imagen}
-                                helperText={
-                                    touched.imagen && errors.imagen && "La URL ingresada no es válida"
-                                }
-                            />
-                            <FormControl variant="filled" sx={{margin: "25px 0 25px 0", width: "100%"}}>
-                                <InputLabel htmlFor="categoria" style={{ color: '#C2C2C2' }}>Escoja una categoria</InputLabel>
-                                    <Select
-                                        required
-                                        value={categoria}
-                                        onChange={handleChangeCategoria}
-                                        fullWidth
-                                        id="categoria"
-                                        sx={{
-                                        color: "white",
-                                        background: "#53585D"
-                                        }}
-                                    >
-                                        <MenuItem value="">
-                                        <em>None</em>
-                                        </MenuItem>
-                                        <MenuItem value={10}>Front End</MenuItem>
-                                        <MenuItem value={21}>Back End</MenuItem>
-                                        <MenuItem value={22}>Innovacion y Gestión</MenuItem>
-                                    </Select>
-                            </FormControl>
-                            <TextField
-                                required
-                                label="Descripcion"
-                                id="descripcion"
-                                name="descripcion" 
-                                variant="filled"
-                                sx={TextFieldStyle}
-                                fullWidth
-                                margin="dense"
-                                type="text"
-                                value={values.descripcion}
-                                onChange={handleChange}
-                                onBlur={handleBlur}
-                                error={touched.descripcion && errors.descripcion}
-                                helperText={
-                                    touched.descripcion && errors.descripcion && "Por favor ingresa una descripcion"
-                                }
-                            />
-                            <TextField
-                                required
-                                label="Codigo de seguridad"
-                                id="seguridad"
-                                name="seguridad" 
-                                variant="filled"
-                                sx={TextFieldStyle}
-                                fullWidth
-                                margin="dense"
-                                type="number"
-                                value={values.seguridad}
-                                onChange={handleChange}
-                                onBlur={handleBlur}
-                                error={touched.seguridad && errors.seguridad}
-                                helperText={
-                                    touched.seguridad && errors.seguridad && "Ingrese hasta 6 números como código de seguridad"
-                                }
-                            />
-                            <ContenedorBotones>
-                                <div>
-                                    <Button 
-                                        variant="contained" 
-                                        type="submit"
-                                        sx={{
-                                            fontSize: "21px",
-                                            fontWeight: "600"
-                                        }}>
-                                        Guardar
-                                    </Button>
-                                    <Button 
-                                        variant="filled"
-                                        onClick={() => {
-                                            window.location.reload()
-                                        }} 
-                                        sx={{
-                                            background: "#9E9E9E",
-                                            marginLeft: "40px",
-                                            fontSize: "21px",
-                                            fontWeight: "600" 
-                                        }}>
-                                        Limpiar
-                                    </Button>
-                                </div>
-                                <Link to="/NuevaCategoria">
-                                    <Button 
-                                        variant="contained"
-                                        sx={{
-                                            fontSize: "21px",
-                                            fontWeight: "600"
-                                        }}>
-                                            Nueva Categoria
-                                    </Button>
-                                </Link>
-                            </ContenedorBotones>
-                        </form>
-                    )}
-                </Formik>
-            </Box>
-		</Fondo>
+                    sx={{
+                    background: "#9E9E9E",
+                    marginLeft: "40px",
+                    fontSize: "21px",
+                    fontWeight: "600" 
+                    }}>
+                        Limpiar
+                </Button>
+            </div>
+                <Link to="/NuevaCategoria">
+                    <Button 
+                    variant="contained"
+                    sx={{
+                        fontSize: "21px",
+                        fontWeight: "600"
+                    }}>
+                        Nueva Categoria
+                    </Button>
+                </Link>
+            </ContenedorBotones>
+        </form>
+      </ContenedorForm>
+    </Fondo>
 	);
 }
  

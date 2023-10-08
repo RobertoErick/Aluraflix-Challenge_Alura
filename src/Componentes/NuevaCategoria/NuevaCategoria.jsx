@@ -1,7 +1,8 @@
-import { React } from "react";
-import { TextField, Button, Box} from "@mui/material";
-import { Formik } from 'formik';
-import Fondo from "../Fondo";
+import React from 'react';
+import { TextField, Button} from "@mui/material";
+import { useFormik } from 'formik';
+import * as Yup from 'yup';
+import Fondo from '../Fondo';
 import styled from "styled-components";
 
 const Titulo = styled.h1`
@@ -12,11 +13,6 @@ const Titulo = styled.h1`
     display: flex;
     align-items: center;
     justify-content: center;
-`
-
-const ContenedorBotones = styled.div`
-    display: flex;
-    justify-content: flex-start;
 `
 
 const TextFieldStyle = {
@@ -30,148 +26,145 @@ const TextFieldStyle = {
     margin: "25px 0 25px 0"
 }
 
+const ContenedorForm = styled.div`
+  display: flex;
+  justify-content: center;
+  flex-Direction: column;
+  padding: 5%;
+`
+
 function NuevaCategoria (){
-    return (
-        <Fondo>
-            <Titulo>Nueva Categoria</Titulo>
-            <Box
-                component="form"
-                autocomplete="off"
-                sx={{
-                    display: "flex",
-                    justifyContent: "center",
-                    flexDirection: "column",
-                    padding: "5%"
-                }}
-                >
-                <Formik
-                    initialValues={{
-                        nombre: '',
-                        descripcion: '',
-                        seguridad: ''
-                    }}
-                    validate={(valores) => {
-                        let errores = {};
+  const formik = useFormik({
+    initialValues: {
+      nombre: '',
+      descripcion: '',
+      color: '#00000',
+      codigo: '',
+    },
+    validationSchema: Yup.object({
+      nombre: Yup.string()
+        .matches(/^[A-Za-z\s]+$/, 'El nombre solo puede contener letras y espacios')
+        .required('Nombre requerido'),
+      descripcion: Yup.string()
+        .required('Descripcion requerida'),
+      color: Yup.string()
+        .required('Color requerido'),
+      codigo: Yup.string()
+        .max(7, 'Son maximo 7 numero')
+        .required('Codigo de seguridad requerido'),
+    }),
+    onSubmit: values => {
+      alert(JSON.stringify(values, null, 2));
+    },
+  });
 
-                        // Validacion nombre
-                        if(!valores.nombre){
-                            errores.nombre = 'Por favor ingresa un nombre'
-                        } else if(!/^[a-zA-ZÀ-ÿ\s]{1,40}$/.test(valores.nombre)){
-                            errores.nombre = 'El nombre solo puede contener letras y espacios'
-                        }
+  const handleLimpiar = () => {
+    formik.resetForm(); // Restablecerá los valores iniciales definidos en initialValues
+  };
 
-                        // Validacion de Descripcion
-                        if(!valores.descripcion){
-                            errores.descripcion = 'Por favor ingresa una descripcion';
-                        }
-
-                        // Validacion de Codigo de Seguridad
-                        if (!valores.seguridad) {
-                            errores.seguridad = 'Por favor, ingresa un código de seguridad';
-                        } else if (!/^\d{1,6}$/.test(valores.seguridad)) {
-                            errores.seguridad = 'Ingrese hasta 6 números como código de seguridad';
-                        }
-
-                        return errores;
-                    }}
-                    onSubmit={(valores, {resetForm}) => {
-                        console.log(valores);
-                        resetForm();
-                    }}
-                >
-                    {( {values, errors, touched, handleSubmit, handleChange, handleBlur} ) => (
-                    <form onSubmit={handleSubmit}>
-                    <TextField
-                        required
-                        label="Nombre"
-                        id="nombre"
-                        name="nombre"
-                        variant="filled"
-                        sx={TextFieldStyle}
-                        fullWidth
-                        margin="dense"
-                        type="text"
-                        value={values.nombre}
-                        onChange={handleChange}
-                        onBlur={handleBlur}
-                        error={touched.nombre && errors.nombre}
-                        helperText={
-                            touched.nombre && errors.nombre && "El nombre solo puede contener letras y espacios"
-                        }
-                    />
-                    <TextField
-                        required
-                        label="Descripcion"
-                        id="descripcion"
-                        name="descripcion"
-                        variant="filled"
-                        sx={TextFieldStyle}
-                        fullWidth
-                        margin="dense"
-                        type="text"
-                        value={values.descripcion}
-                        onChange={handleChange}
-                        onBlur={handleBlur}
-                        error={touched.descripcion && errors.descripcion}
-                        helperText={
-                            touched.descripcion && errors.descripcion && "La descripcion solo puede contener letras y espacios"
-                        }
-                    />
-                    <TextField
-                        required
-                        label="Color"
-                        fullWidth 
-                        sx={TextFieldStyle}
-                        type="color"
-                    />
-                    <TextField
-                        required
-                        label="Seguridad"
-                        id="seguridad"
-                        name="seguridad"
-                        variant="filled"
-                        sx={TextFieldStyle}
-                        fullWidth
-                        margin="dense"
-                        type="text"
-                        value={values.seguridad}
-                        onChange={handleChange}
-                        onBlur={handleBlur}
-                        error={touched.seguridad && errors.seguridad}
-                        helperText={
-                            touched.seguridad && errors.seguridad && "Ingrese hasta 6 números como código de seguridad"
-                        }
-                    />
-                    <ContenedorBotones>
-                            <Button 
-                                variant="contained" 
-                                type="submit"
-                                sx={{
-                                    fontSize: "21px",
-                                    fontWeight: "600"
-                                }}>
-                                Guardar
-                            </Button>
-                            <Button 
-                                variant="filled"
-                                onClick={() => {
-                                    window.location.reload();
-                                }}
-                                sx={{
-                                    background: "#9E9E9E",
-                                    marginLeft: "40px",
-                                    fontSize: "21px",
-                                    fontWeight: "600" 
-                                }}>
-                                Limpiar
-                            </Button>
-                    </ContenedorBotones>
-                    </form>
-                    )}
-                </Formik>
-            </Box>
-        </Fondo>
-      );
-};
+  return (
+  <Fondo>
+    <Titulo>Nueva Categoria</Titulo>
+      <ContenedorForm>
+        <form onSubmit={formik.handleSubmit}>
+          <TextField
+            required
+            id="nombre"
+            name="nombre"
+            label="Nombre"
+            type="text"
+            onChange={formik.handleChange}
+            onBlur={formik.handleBlur}
+            value={formik.values.nombre}
+            variant="filled"
+            sx={TextFieldStyle}
+            fullWidth
+            margin="dense"
+            error={formik.touched.nombre && formik.errors.nombre}
+            helperText={
+              formik.touched.nombre && formik.errors.nombre && formik.errors.nombre
+            }
+          />
+          <TextField
+            required
+            id="descripcion"
+            name="descripcion"
+            label="Descripcion"
+            type="text"
+            onChange={formik.handleChange}
+            onBlur={formik.handleBlur}
+            value={formik.values.descripcion}
+            variant="filled"
+            sx={TextFieldStyle}
+            fullWidth
+            margin="dense"
+            error={formik.touched.descripcion && formik.errors.descripcion}
+            helperText={
+              formik.touched.descripcion && formik.errors.descripcion && formik.errors.descripcion
+            }
+          />
+          <TextField
+            required
+            id="color"
+            name="color"
+            label="Color"
+            type="color"
+            onChange={formik.handleChange}
+            onBlur={formik.handleBlur}
+            value={formik.values.color}
+            variant="filled"
+            sx={TextFieldStyle}
+            fullWidth
+            margin="dense"
+            error={formik.touched.color && formik.errors.color}
+            helperText={
+              formik.touched.color && formik.errors.color && formik.errors.color
+            }
+          />
+          <TextField
+            required
+            id="codigo"
+            name="codigo"
+            label="Codigo"
+            type="codigo"
+            onChange={formik.handleChange}
+            onBlur={formik.handleBlur}
+            value={formik.values.codigo}
+            variant="filled"
+            sx={TextFieldStyle}
+            fullWidth
+            margin="dense"
+            error={formik.touched.codigo && formik.errors.codigo}
+            helperText={
+              formik.touched.codigo && formik.errors.codigo && formik.errors.codigo
+            }
+          />
+          <Button 
+            variant="contained" 
+            type="submit"
+            sx={{
+              fontSize: "21px",
+              fontWeight: "600"
+            }}>
+              Guardar
+          </Button>
+          <Button 
+            variant="filled"
+            onClick={() => {
+              handleLimpiar();
+            }}
+            sx={{
+              background: "#9E9E9E",
+              marginLeft: "40px",
+              fontSize: "21px",
+              fontWeight: "600" 
+            }}>
+              Limpiar
+          </Button>
+        </form>
+      </ContenedorForm>
+  </Fondo>
+  );
+}
 
 export default NuevaCategoria
