@@ -4,6 +4,9 @@ import { useFormik } from 'formik';
 import * as Yup from 'yup';
 import Fondo from '../Fondo';
 import styled from "styled-components";
+import { clientServices } from '../../Services/clientServices';
+
+const agregarCategoria = clientServices.agregarCategoria;
 
 const Titulo = styled.h1`
     color: #F5F5F5;
@@ -55,6 +58,7 @@ function NuevaCategoria (){
     }),
     onSubmit: values => {
       alert(JSON.stringify(values, null, 2));
+      agregarCategoria(values);
     },
   });
 

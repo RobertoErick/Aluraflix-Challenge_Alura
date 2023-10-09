@@ -1,0 +1,22 @@
+{
+  "NuevoVideo": [
+    {
+      "titulo": "Nuevo Video",
+      "video": "https://www.figma.com/file/T6P42CQ8S8WJ7OImPuu91H/AluraFlix-ESP?node-id=1%3A106&mode=dev",
+      "imagen": "https://www.figma.com/file/T6P42CQ8S8WJ7OImPuu91H/AluraFlix-ESP?node-id=1%3A106&mode=dev",
+      "categoria": "Front-End",
+      "descripcion": "Esta  es la primera prueba",
+      "codigo": 78945,
+      "id": 1
+    }
+  ],
+  "NuevaCategoria": [
+    {
+      "nombre": "Categoria Nueva",
+      "descripcion": "Esta es la prueba de una nueva categoria",
+      "color": "#b10606",
+      "codigo": "4561",
+      "id": 1
+    }
+  ]
+}

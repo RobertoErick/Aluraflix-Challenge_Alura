@@ -5,6 +5,9 @@ import * as Yup from 'yup';
 import Fondo from '../Fondo';
 import styled from "styled-components";
 import { Link } from "react-router-dom";
+import { clientServices } from '../../Services/clientServices';
+
+const agregarVideo = clientServices.agregarVideo;
 
 const Titulo = styled.h1`
     color: #F5F5F5;
@@ -67,6 +70,7 @@ function NuevoVideo(){
         }),
         onSubmit: values => {
           alert(JSON.stringify(values, null, 2));
+          agregarVideo(values);
         },
     });
     
@@ -148,7 +152,7 @@ function NuevoVideo(){
                 value={formik.values.categoria}
             >
                 <MenuItem value="">Seleccione una Categoria</MenuItem>
-                <MenuItem value="Front">Front End</MenuItem>
+                <MenuItem value="Front-End">Front End</MenuItem>
                 <MenuItem value="Back">Back End</MenuItem>
                 <MenuItem value="Innovacion">Innovacion y Gestion</MenuItem>
             </Select>
