@@ -1,4 +1,5 @@
 import React from 'react';
+import { useState, useEffect } from 'react';
 import { TextField, Button, FormControl, Select, MenuItem, InputLabel} from "@mui/material";
 import { useFormik } from 'formik';
 import * as Yup from 'yup';
@@ -8,6 +9,7 @@ import { Link } from "react-router-dom";
 import { clientServices } from '../../Services/clientServices';
 
 const agregarVideo = clientServices.agregarVideo;
+const obtenerCategorias = clientServices.obtenerCategorias;
 
 const Titulo = styled.h1`
     color: #F5F5F5;
@@ -43,6 +45,21 @@ const ContenedorForm = styled.div`
 `
 
 function NuevoVideo(){
+  const [categorias, setCategorias] = useState([]);
+
+  useEffect(() => {
+    async function cargarCategorias() {
+      try {
+        const categoriasObtenidas = await obtenerCategorias();
+        setCategorias(categoriasObtenidas);
+      } catch (error) {
+        console.error("Error al cargar las categorías:", error);
+      }
+    }
+
+    cargarCategorias();
+  }, []);
+  
     const formik = useFormik({
         initialValues: {
           titulo: '',
@@ -71,6 +88,7 @@ function NuevoVideo(){
         onSubmit: values => {
           alert(JSON.stringify(values, null, 2));
           agregarVideo(values);
+          categorias();
         },
     });
     
@@ -152,9 +170,11 @@ function NuevoVideo(){
                 value={formik.values.categoria}
             >
                 <MenuItem value="">Seleccione una Categoria</MenuItem>
-                <MenuItem value="Front-End">Front End</MenuItem>
-                <MenuItem value="Back">Back End</MenuItem>
-                <MenuItem value="Innovacion">Innovacion y Gestion</MenuItem>
+                {categorias.map((categoria) => (
+                  <MenuItem key={categoria} value={categoria}>
+                  {categoria}
+                  </MenuItem>
+                ))}
             </Select>
             </FormControl>
            <TextField
